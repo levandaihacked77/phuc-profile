@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phúc — Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12151A; --surface:#1A1F26; --surface-2:#212832;
+    --ink:#E8ECEF; --ink-soft:#9AA5B0; --ink-dim:#5C6670;
+    --ok:#3ECF8E; --warn:#E8A33D; --info:#4FA8E0; --accent:#B08CFF;
+    --line:rgba(232,235,238,0.09); --line-strong:rgba(232,235,238,0.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg); color:var(--ink); font-family:'Instrument Sans', sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(232,235,238,0.06) 1px, transparent 1px);
+    background-size:22px 22px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .aurora{position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden;}
+  .aurora span{position:absolute; border-radius:50%; filter:blur(90px); opacity:0.22; animation:drift 22s ease-in-out infinite;}
+  .aurora span:nth-child(1){width:480px; height:480px; background:var(--info); top:-160px; left:-100px;}
+  .aurora span:nth-child(2){width:420px; height:420px; background:var(--ok); top:60px; right:-160px; animation-delay:-7s;}
+  .aurora span:nth-child(3){width:380px; height:380px; background:var(--accent); bottom:-200px; left:30%; animation-delay:-14s;}
+  @keyframes drift{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(30px,-20px) scale(1.08);}
+  }
+  @media (prefers-reduced-motion: reduce){ .aurora span{animation:none;} }
+  a{color:inherit;}
+  .mono{font-family:'JetBrains Mono', monospace;}
+  .wrap{max-width:780px; margin:0 auto; padding:0 24px;}
+
+  @media (prefers-reduced-motion: reduce){ * {animation-duration:.01ms !important;} }
+
+  .banner{
+    background:linear-gradient(90deg, rgba(62,207,142,0.12), transparent 60%);
+    border-bottom:1px solid var(--line); padding:11px 0;
+  }
+  .banner .row{display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--ink-soft); flex-wrap:wrap;}
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--ok); flex-shrink:0; position:relative;}
+  .dot::after{
+    content:""; position:absolute; inset:-4px; border-radius:50%; border:1px solid var(--ok);
+    opacity:0.6; animation:pulse 2.2s ease-out infinite;
+  }
+  @keyframes pulse{ 0%{transform:scale(0.6); opacity:0.6;} 100%{transform:scale(1.8); opacity:0;} }
+
+  header{padding:56px 0 28px; display:flex; gap:22px; align-items:flex-start;}
+  .avatar{
+    width:68px; height:68px; border-radius:16px; flex-shrink:0; margin-top:4px;
+    background:linear-gradient(150deg, var(--surface-2), var(--surface));
+    border:1px solid var(--line-strong); display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-weight:600; font-size:24px; color:var(--info);
+    box-shadow:0 8px 22px -8px rgba(0,0,0,0.5);
+  }
+  .role-tag{
+    display:inline-block; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.04em;
+    color:var(--info); background:rgba(79,168,224,0.1); border:1px solid rgba(79,168,224,0.25);
+    padding:4px 10px; border-radius:4px; margin-bottom:14px;
+  }
+  h1{
+    font-family:'Instrument Sans', sans-serif; font-size:clamp(28px,4.2vw,40px); font-weight:700; letter-spacing:-0.02em; margin-bottom:10px;
+    background:linear-gradient(100deg, var(--ink) 30%, var(--info) 65%, var(--accent) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub{color:var(--ink-soft); font-size:16px; max-width:540px; line-height:1.7;}
+  .sub .mono{color:var(--ink-dim);}
+
+  .quicknav{display:flex; gap:10px; padding:20px 0 4px; border-top:1px solid var(--line); flex-wrap:wrap;}
+  .quicknav a{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Instrument Sans', sans-serif; font-weight:600; font-size:14px; color:var(--ink-soft);
+    text-decoration:none; padding:9px 16px; border-radius:999px; border:1px solid var(--line);
+    background:var(--surface); transition:all .2s ease;
+  }
+  .quicknav a .qdot{width:6px; height:6px; border-radius:50%; background:var(--info); flex-shrink:0;}
+  .quicknav a:nth-child(2) .qdot{background:var(--ok);}
+  .quicknav a:nth-child(3) .qdot{background:var(--warn);}
+  .quicknav a:nth-child(4) .qdot{background:var(--accent);}
+  .quicknav a:hover{color:var(--ink); border-color:var(--line-strong); background:var(--surface-2); transform:translateY(-1px);}
+
+  section{padding:36px 0; border-top:1px solid var(--line); scroll-margin-top:24px;}
+  .sec-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:20px; gap:12px; flex-wrap:wrap;}
+  .sec-label{
+    font-family:'Instrument Sans', sans-serif; font-size:21px; font-weight:700; letter-spacing:-0.01em;
+    color:var(--ink); display:flex; align-items:center; gap:10px; margin-bottom:20px;
+  }
+  .sec-label .sdot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+  .sec-note{font-size:13.5px; color:var(--ink-soft);}
+
+  .card{border:1px solid var(--line); border-radius:10px; background:var(--surface); box-shadow:0 12px 30px -18px rgba(0,0,0,0.5);}
+
+  .kv-card{padding:20px 22px;}
+  .kv{display:grid; grid-template-columns:130px 1fr; row-gap:14px; column-gap:16px; font-size:14.5px;}
+  .kv dt{color:var(--ink-soft); font-family:'Instrument Sans', sans-serif; font-weight:600; font-size:14px; padding-top:1px;}
+  .kv dd{color:var(--ink); font-size:14.5px;}
+
+  .svc-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:560px){ .svc-grid{grid-template-columns:1fr;} }
+  .svc-card{
+    border:1px solid var(--line); border-radius:10px; background:var(--surface); padding:18px 20px;
+    border-left:3px solid var(--accent); position:relative; box-shadow:0 12px 30px -20px rgba(0,0,0,0.5);
+  }
+  .svc-card.marketing{border-left-color:var(--warn);}
+  .svc-card h4{font-family:'Instrument Sans', sans-serif; font-size:16px; font-weight:600; margin-bottom:6px; padding-right:72px;}
+  .svc-card p{font-size:14px; color:var(--ink-soft); line-height:1.5;}
+  .svc-cat{
+    position:absolute; top:16px; right:16px; font-family:'JetBrains Mono', monospace; font-size:10.5px;
+    font-weight:500; letter-spacing:.03em; color:var(--accent); background:rgba(176,140,255,0.12);
+    padding:3px 9px; border-radius:999px;
+  }
+  .svc-card.marketing .svc-cat{color:var(--warn); background:rgba(232,163,61,0.12);}
+
+  .svc{border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface); box-shadow:0 12px 30px -18px rgba(0,0,0,0.5);}
+  .svc-row{display:flex; align-items:flex-start; gap:14px; padding:16px 18px; border-bottom:1px solid var(--line);}
+  .svc-row:last-child{border-bottom:none;}
+  .svc-status{margin-top:6px; flex-shrink:0;}
+  .svc-status.warn{background:var(--warn);}
+  .svc-status.warn::after{border-color:var(--warn);}
+  .svc-body{flex:1; min-width:0;}
+  .svc-title{font-family:'Instrument Sans', sans-serif; font-weight:600; font-size:16.5px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .svc-title a{text-decoration:none; border-bottom:1px solid var(--line-strong);}
+  .svc-title a:hover{border-color:var(--info); color:var(--info);}
+  .svc-state{
+    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:500; color:var(--ok); margin-left:auto; white-space:nowrap;
+    background:rgba(62,207,142,0.12); padding:3px 10px; border-radius:999px;
+  }
+  .svc-state.warn{color:var(--warn); background:rgba(232,163,61,0.12);}
+  .svc-desc{color:var(--ink-soft); font-size:14.5px; margin-top:6px; line-height:1.5;}
+  .svc-stack{display:flex; gap:6px; flex-wrap:wrap; margin-top:9px;}
+  .tag{font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:500; color:var(--ink-soft); background:var(--surface-2); padding:4px 10px; border-radius:6px;}
+
+  .endpoint{
+    display:flex; align-items:center; justify-content:space-between; padding:14px 18px;
+    border:1px solid var(--line); border-radius:8px; margin-bottom:10px; text-decoration:none; color:var(--ink);
+    background:var(--surface); transition:border-color .2s ease, transform .15s ease;
+  }
+  .endpoint:hover{border-color:var(--info); transform:translateX(2px);}
+  .endpoint .path{font-family:'JetBrains Mono', monospace; font-size:14px; font-weight:500;}
+  .endpoint .arrow{color:var(--ink-dim); font-family:'JetBrains Mono', monospace;}
+
+  footer{padding:28px 0 60px; color:var(--ink-dim); font-family:'Instrument Sans', sans-serif; font-size:12.5px;}
+
+  @media (max-width:480px){
+    header{gap:14px;}
+    .avatar{width:52px; height:52px; border-radius:12px; font-size:18px;}
+    .kv{grid-template-columns:1fr;}
+    .kv dt{padding-top:6px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora"><span></span><span></span><span></span></div>
+
+<div class="banner">
+  <div class="wrap row">
+    <span class="dot"></span>
+    <span class="mono">Đang hoạt động</span>
+    <span style="color:var(--ink-dim)">·</span>
+    <span>Nhận thêm dự án freelance ngắn hạn</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="avatar">P</div>
+    <div>
+      <div class="role-tag">SINH VIÊN · FULL-STACK & AUTOMATION</div>
+      <h1>Nguyễn Lê Thành Phúc</h1>
+      <p class="sub">Sinh viên ngành Kỹ thuật phần mềm tại <strong style="color:var(--ink); font-weight:600;">FPT University</strong> — xây dựng ứng dụng thực tế song song với chương trình học, đồng thời nhận thêm dự án ngoài: chạy quảng cáo, viết app, viết tool tự động hóa.</p>
+    </div>
+  </header>
+
+  <nav class="quicknav">
+    <a href="#dichvu"><span class="qdot"></span>Dịch vụ</a>
+    <a href="#duan"><span class="qdot"></span>Dự án</a>
+    <a href="#thongtin"><span class="qdot"></span>Thông tin</a>
+    <a href="#lienhe"><span class="qdot"></span>Liên hệ</a>
+  </nav>
+
+  <section id="dichvu">
+    <div class="sec-head">
+      <div class="sec-label" style="margin-bottom:0;"><span class="sdot" style="background:var(--info);"></span>Dịch vụ nhận làm</div>
+      <div class="sec-note">Báo giá theo yêu cầu cụ thể</div>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card marketing">
+        <span class="svc-cat">Marketing</span>
+        <h4>Chạy quảng cáo Facebook</h4>
+        <p>Lên chiến dịch, target khách hàng, tối ưu chi phí/đơn</p>
+      </div>
+      <div class="svc-card marketing">
+        <span class="svc-cat">Marketing</span>
+        <h4>Chạy quảng cáo TikTok</h4>
+        <p>Thiết lập & tối ưu chiến dịch TikTok Ads</p>
+      </div>
+      <div class="svc-card">
+        <span class="svc-cat">Dev</span>
+        <h4>Viết ứng dụng theo yêu cầu</h4>
+        <p>App Android / web riêng theo nhu cầu quản lý, bán hàng...</p>
+      </div>
+      <div class="svc-card">
+        <span class="svc-cat">Dev</span>
+        <h4>Viết tool / automation</h4>
+        <p>Script tự động hóa công việc lặp lại, xử lý dữ liệu</p>
+      </div>
+      <div class="svc-card">
+        <span class="svc-cat">Dev</span>
+        <h4>Bot Telegram theo yêu cầu</h4>
+        <p>Bot chấm công, thông báo, quản lý nội bộ</p>
+      </div>
+      <div class="svc-card">
+        <span class="svc-cat">Dev</span>
+        <h4>Landing page / web bán hàng</h4>
+        <p>Web giới thiệu, landing page cho affiliate, cửa hàng nhỏ</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="duan">
+    <div class="sec-label"><span class="sdot" style="background:var(--ok);"></span>Dự án đang chạy</div>
+    <div class="svc">
+      <div class="svc-row">
+        <span class="dot svc-status warn"></span>
+        <div class="svc-body">
+          <div class="svc-title">Hệ thống giám sát máy nhân viên<span class="svc-state mono warn">building</span></div>
+          <div class="svc-desc">Kiến trúc agent + server trung tâm, quản lý ~20 máy</div>
+          <div class="svc-stack"><span class="tag">Agent/Server</span></div>
+        </div>
+      </div>
+      <div class="svc-row">
+        <span class="dot svc-status"></span>
+        <div class="svc-body">
+          <div class="svc-title">Sổ bán cá gia đình<span class="svc-state mono">operational</span></div>
+          <div class="svc-desc">Ứng dụng theo dõi bán hàng & công nợ cho tiệm cá của gia đình</div>
+          <div class="svc-stack"><span class="tag">Android</span></div>
+        </div>
+      </div>
+      <div class="svc-row">
+        <span class="dot svc-status warn"></span>
+        <div class="svc-body">
+          <div class="svc-title">Shopify Dropshipping<span class="svc-state mono warn">building</span></div>
+          <div class="svc-desc">Cửa hàng dropshipping hướng khách Mỹ, nguồn hàng qua CJ Dropshipping</div>
+          <div class="svc-stack"><span class="tag">Shopify</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="thongtin">
+    <div class="sec-label"><span class="sdot" style="background:var(--warn);"></span>Thông tin</div>
+    <div class="card kv-card">
+    <dl class="kv">
+      <dt>Mã số SV</dt><dd class="mono">DE191020</dd>
+      <dt>Trường</dt><dd>FPT University</dd>
+      <dt>Vị trí</dt><dd><a href="https://www.facebook.com/Ho%C3%A0i-Nhon-B%C3%ACnh-%C3%90%E1%BB%8Bnh-Vietnam-108729979147301/" target="_blank" style="text-decoration:none; border-bottom:1px solid var(--line-strong);">Hoài Nhơn, Bình Định, Việt Nam</a></dd>
+      <dt>Điện thoại</dt><dd class="mono">0973 743 267</dd>
+      <dt>Đang học</dt><dd>Java OOP (LAB211), Thiết kế cơ sở dữ liệu</dd>
+      <dt>GitHub</dt><dd><a href="https://github.com/levandaihacked77" class="mono" style="border-bottom:1px solid var(--line-strong); text-decoration:none;">github.com/levandaihacked77</a></dd>
+    </dl>
+    </div>
+  </section>
+
+  <section id="lienhe">
+    <div class="sec-label"><span class="sdot" style="background:var(--accent);"></span>Liên hệ</div>
+    <a class="endpoint" href="https://github.com/levandaihacked77" target="_blank">
+      <span class="path">GET /github</span><span class="arrow">→</span>
+    </a>
+    <a class="endpoint" href="https://www.facebook.com/Phuc.8386.7777" target="_blank">
+      <span class="path">GET /facebook</span><span class="arrow">→</span>
+    </a>
+    <a class="endpoint" href="tel:0973743267">
+      <span class="path">GET /phone</span><span class="arrow">→</span>
+    </a>
+    <a class="endpoint" href="mailto:nguyenlethanhphuc368@gmail.com">
+      <span class="path">GET /email</span><span class="arrow">→</span>
+    </a>
+  </section>
+
+  <footer>
+    Cập nhật lần cuối: 2026
+  </footer>
+</div>
+
+</body>
+</html>
